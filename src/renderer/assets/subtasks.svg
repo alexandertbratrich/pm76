@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+    <g id="subtasks">
+        <path d="M80,336L96,336" style="fill:none;stroke:rgb(51,51,51);stroke-width:64px;"/>
+        <path d="M176,336L272,336" style="fill:none;stroke:rgb(51,51,51);stroke-width:64px;"/>
+        <path d="M352,336L432,336" style="fill:none;stroke:rgb(51,51,51);stroke-width:64px;"/>
+        <path d="M80,256L96,256" style="fill:none;stroke:rgb(51,51,51);stroke-width:64px;"/>
+        <path d="M112,416L128,416" style="fill:none;stroke:rgb(51,51,51);stroke-width:64px;"/>
+        <path d="M176,256L432,256" style="fill:none;stroke:rgb(51,51,51);stroke-width:64px;"/>
+        <path d="M208,416L393.933,416" style="fill:none;stroke:rgb(51,51,51);stroke-width:64px;"/>
+        <path d="M80,176L96,176" style="fill:none;stroke:rgb(51,51,51);stroke-width:64px;"/>
+        <path d="M300.967,176L432,176" style="fill:none;stroke:rgb(51,51,51);stroke-width:64px;"/>
+        <path d="M176,176L224,176" style="fill:none;stroke:rgb(51,51,51);stroke-width:64px;"/>
+        <path d="M112,96L128,96" style="fill:none;stroke:rgb(51,51,51);stroke-width:64px;"/>
+        <path d="M208,96L400,96" style="fill:none;stroke:rgb(51,51,51);stroke-width:64px;"/>
+    </g>
+</svg>
