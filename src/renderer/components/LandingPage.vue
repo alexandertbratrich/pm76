@@ -19,6 +19,7 @@
   * edit subtasks/tags
   * make auto projects-tags when adding a tag when I project is selected
   * sub projects?
+  * Minor Design Edits
 
 * when "wip", then "started x ago"
   * except when dueDate, then that more important
@@ -139,7 +140,7 @@
     </div>
 
     <div id="top">
-      <div class="button" @click="projectListShown=!projectListShown">
+      <div class="button" @click="projectListShown=!projectListShown; saveSettings()">
         <img class="icon" src="~@/assets/list.svg"/>
       </div>
 
@@ -171,7 +172,7 @@
     </div>
 
     <div id="middle">
-      <div id="projectlist" :style="{'width': 'calc(100% / ' + (kanbanStates.length + 1) + ')'}" v-if="projectListShown">
+      <div id="projectlist" v-if="projectListShown"> <!--:style="{'width': 'calc(100% / ' + (kanbanStates.length + 1) + ')'}">-->
         <div class="title">
           <p>Projectlist</p>
         </div>
@@ -186,11 +187,12 @@
         </div>
       </div>
 
-      <div id="kanban" :style="{'width': 'calc(100% / ' + (kanbanStates.length) + ' * ' + (kanbanStates.length) + ')'}">
-        <div :class="['column', {'target': dropTarget == kanbanIds[index]}]" v-for="(col, index) in kanbanStates" :style="{'width': 'calc(100% / ' + (kanbanStates.length) + ' - 8px)'}"
+      <div id="kanban"><!-- :style="{'width': 'calc(100% / ' + (kanbanStates.length) + ' * ' + (kanbanStates.length) + ')'}">-->
+        <div :class="['column', {'target': dropTarget == kanbanIds[index]}]" v-for="(col, index) in kanbanStates"
           @drop="drop($event, kanbanIds[index])"
           @dragover.prevent="dragover($event, kanbanIds[index])"
           @dragenter.prevent>
+          <!-- :style="{'width': 'calc(100% / ' + (kanbanStates.length) + ' - 8px)'}"-->
           <div class="title" @dragstart="dragstart($event, 'col', kanbanIds[index])"
             @dragover.prevent="dragover($event, kanbanIds[index])"
             draggable>
@@ -279,14 +281,17 @@
         <div class="title">
           <p>Settings</p>
 
-          <div class="button" @click="settingsShown=false">
+          <div class="button" @click="settingsShown=false; saveProjects(); saveSettings()">
             <p>&times;</p>
           </div>
         </div>
         <div class="segment">
           <p><b>Projects</b></p>
           <div class="item" v-for="(pr, indexP) in projects">
-            <p>{{pr.title}}</p>
+            <input type="text" placerholder="Project Title" v-model="projects[indexP].title">
+            <!--<div class="button" @click="editProject(indexP)">
+              <img src="~@/assets/edit.svg">
+            </div>-->
             <div class="button" @click="deleteProject(indexP)">
               <img src="~@/assets/trash.svg">
             </div>
@@ -295,8 +300,11 @@
         <div class="segment">
           <p><b>Columns</b></p>
           <div class="item" v-for="(col, indexC) in kanbanStates">
-            <p>{{col}}</p>
-            <div class="button" @click="deleteCol(indexC)">
+            <input type="text" placerholder="Column Title" v-model="kanbanStates[indexC]">
+            <!--<div class="button" @click="editCol(indexC)">
+              <img src="~@/assets/edit.svg">
+            </div>-->
+            <div v-if="kanbanIds.length>1" class="button" @click="deleteCol(indexC)">
               <img src="~@/assets/trash.svg">
             </div>
           </div>
@@ -318,6 +326,8 @@
 </template>
 
 <script>
+  var fs = require('fs')
+  var path = require('path')
   // import SystemInformation from './LandingPage/SystemInformation'
 
   export default {
@@ -326,89 +336,11 @@
     data () {
       return {
         startversion: '0.1.814',
-        version: '0.1.910',
+        version: '0.1.919',
         kanbanStates: ['todo', 'wip', 'done'],
         kanbanIds: [0, 1, 2],
         bgColors: ['w', 'gr', 'r', 'ro', 'o', 'oy', 'y', 'yg', 'g', 'bg', 'b', 'bv', 'v', 'vr'],
-        tasks: [
-          { title: 'Drag and Drop', bg: 'ro', state: 2, addDate: '2020-09-07', tags: ['PM 76'] },
-          { title: 'Tasks',
-            state: 2,
-            bg: 'yg',
-            addDate: '2020-09-07',
-            subtasks: [
-              { title: 'Adding Task', state: 1, addDate: '2020-09-07' },
-              { title: 'Editing Task', state: 1, addDate: '2020-09-07' },
-              { title: 'Deleting Task', state: 1, addDate: '2020-09-07' }
-            ],
-            tags: ['PM 76']
-          },
-          { title: 'Make Design', state: 2, bg: 'o', addDate: '2020-09-07', tags: ['PM 76'] },
-          { title: 'Restart', state: 2, bg: 'oy', addDate: '2020-09-07', tags: ['PM 76'] },
-          { title: 'Projects',
-            state: 1,
-            bg: 'g',
-            addDate: '2020-09-09',
-            subtasks: [
-              { title: 'adding', state: 1, addDate: '2020-09-09' },
-              { title: 'editing', state: 0, addDate: '2020-09-09' },
-              { title: 'deleting', state: 0, addDate: '2020-09-09' }
-            ],
-            tags: ['PM 76']
-          },
-          { title: 'Column',
-            state: 1,
-            bg: 'bg',
-            addDate: '2020-09-09',
-            subtasks: [
-              { title: 'adding', state: 1, addDate: '2020-09-09' },
-              { title: 'editing', state: 0, addDate: '2020-09-09' },
-              { title: 'deleting', state: 0, addDate: '2020-09-09' },
-              { title: 'rearrange', state: 1, addDate: '2020-09-09' }
-            ],
-            tags: ['PM 76']
-          },
-          { title: 'Subtasks',
-            state: 2,
-            bg: 'b',
-            addDate: '2020-09-09',
-            subtasks: [
-              { title: 'adding', state: 1, addDate: '2020-09-09' },
-              { title: 'editing', state: 0, addDate: '2020-09-09' },
-              { title: 'deleting', state: 1, addDate: '2020-09-09' }
-            ],
-            tags: ['PM 76']
-          },
-          { title: 'Tags',
-            state: 2,
-            bg: 'b',
-            addDate: '2020-09-16',
-            subtasks: [
-              { title: 'adding', state: 1, addDate: '2020-09-09' },
-              { title: 'editing', state: 0, addDate: '2020-09-09' },
-              { title: 'deleting', state: 1, addDate: '2020-09-09' }
-            ],
-            tags: ['PM 76']
-          },
-          { title: 'Filter/Sorting',
-            state: 2,
-            bg: 'b',
-            addDate: '2020-09-16',
-            subtasks: [
-              { title: 'filter tasks', state: 1, addDate: '2020-09-16' },
-              { title: 'filter projects', state: 1, addDate: '2020-09-16' }
-            ],
-            tags: ['PM 76']
-          },
-          { title: 'Automove Task on start/finish all Subtasks', bg: 'bv', state: 2, addDate: '2020-09-09', tags: ['PM 76'] },
-          { title: 'Change Background Color of Task', bg: 'v', state: 2, addDate: '2020-09-09', tags: ['PM 76'] },
-          { title: 'Save Data with Electron', bg: 'vr', state: 0, addDate: '2020-09-09', tags: ['PM 76'] },
-          { title: 'Minor Design Edits', bg: 'w', state: 1, addDate: '2020-09-09', tags: ['PM 76'] },
-          { title: 'Git Upload', bg: 'gr', state: 0, addDate: '2020-09-09', tags: ['PM 76'] },
-          { title: 'Build and test', bg: 'r', state: 0, addDate: '2020-09-09', tags: ['PM 76'] },
-          { title: 'PCT', bg: 'r', state: 2, addDate: '2020-09-18', tags: ['Zimmer'] },
-          { title: 'Test', bg: 'r', state: 2, addDate: '2020-09-18', tags: ['Zimmer', 'Masterthesis'] }
-        ],
+        tasks: [],
         dragType: undefined,
         dragTarget: undefined,
         dropTarget: undefined,
@@ -431,11 +363,7 @@
         editTaskNewTag: '',
         editTaskTags: [],
         // project
-        projects: [
-          { title: 'PM 76', state: 0, addDate: '2020-09-16T15:47' },
-          { title: 'Masterthesis', state: 0, addDate: '2020-09-18T16:42' },
-          { title: 'Zimmer', state: 0, addDate: '2020-09-18T16:43' }
-        ],
+        projects: [],
         selectedProject: undefined,
         projectListShown: true,
         newProjectTitle: ''
@@ -447,6 +375,7 @@
         else {
           this.selectedProject = index
         }
+        this.saveSettings()
       },
       convertTags () {
         let splits = this.editTaskNewTag.split(',')
@@ -488,6 +417,7 @@
         this.taskModalShown = false
         this.selectedEdit = undefined
         this.editTaskSubtasks = []
+        this.saveTasks()
       },
       deleteTask () {
         let title = this.tasks[this.selectedEdit].title
@@ -496,6 +426,7 @@
           this.tasks.splice(this.selectedEdit, 1)
           this.taskModalShown = false
           this.selectedEdit = undefined
+          this.saveTasks()
         }
       },
       deleteSubtask (index) {
@@ -511,6 +442,29 @@
         if (con === true) {
           this.editTaskTags.splice(index, 1)
         }
+      },
+      deleteCol (index) {
+        let title = this.kanbanStates[index]
+        let con = confirm('Are you sure you want to delete Column »' + title + '«?')
+        if (con === true) {
+          this.kanbanStates.splice(index, 1)
+          this.kanbanIds.splice(index, 1)
+          this.saveSettings()
+        }
+      },
+      deleteProject (index) {
+        let title = this.projects[index].title
+        let con = confirm('Are you sure you want to delete Project »' + title + '«?')
+        if (con === true) {
+          this.projects.splice(index, 1)
+          this.saveProjects()
+        }
+      },
+      editCol (index) {
+        // x
+      },
+      editProject (index) {
+        // x
       },
       selectTask (index) {
         if (this.selected === index) this.selected = undefined
@@ -547,6 +501,7 @@
           // change state if col changed
           if (this.tasks[this.dragTarget].state !== col) {
             this.tasks[this.dragTarget].state = col
+            this.saveTasks()
           }
           // to, 0, from()
           // this.tasks.splice(this.dragoverTask, 0, this.tasks.splice(this.dragTarget, 1)[0])
@@ -555,6 +510,7 @@
             // delete task
             console.log('delete task »' + this.tasks[this.dragTarget].title + '«')
             this.tasks.splice(this.dragTarget, 1)
+            this.saveTasks()
           } else if (this.dropTargetTask === -1) {
             console.log('add task »' + this.tasks[this.dragTarget].title + '« to end of »' + this.kanbanStates[col] + '«')
             let index = this.getLastTask(this.kanbanIds[col])
@@ -565,6 +521,7 @@
             this.tasks.splice(index, 0, tempTask)
             // if the dragged task is selected
             this.selected = -1
+            this.saveTasks()
             /* if (this.selected === this.dragTarget) this.selected = index
             // unselect to it can't be edited
             if (this.selected === index && this.tasks[index].state === 2) this.selected = -1 */
@@ -577,6 +534,7 @@
             this.tasks.splice(this.dragTarget, 1)
             // ...move to new position
             this.tasks.splice(this.dropTargetTask, 0, tempTask)
+            this.saveTasks()
             // if the dragged task is selected
             if (this.selected === this.dragTarget) this.selected = this.dropTargetTask
           }
@@ -584,12 +542,16 @@
           if (this.dragTarget !== this.dropTarget) {
             let tempCol = this.kanbanStates[this.dragTarget]
             let tempColId = this.kanbanIds[this.dragTarget]
-            // take old task...
-            this.kanbanStates.splice(this.dragTarget, 1)
-            this.kanbanIds.splice(this.dragTarget, 1)
-            // ...move to new position
-            this.kanbanStates.splice(this.dropTarget, 0, tempCol)
-            this.kanbanIds.splice(this.dropTarget, 0, tempColId)
+            if (this.dragTarget !== undefined && this.dropTarget !== undefined &&
+                this.dragTarget !== null && this.dropTarget !== null) {
+              // take old task...
+              this.kanbanStates.splice(this.dragTarget, 1)
+              this.kanbanIds.splice(this.dragTarget, 1)
+              // ...move to new position
+              this.kanbanStates.splice(this.dropTarget, 0, tempCol)
+              this.kanbanIds.splice(this.dropTarget, 0, tempColId)
+              this.saveSettings()
+            }
           }
         }
 
@@ -619,6 +581,8 @@
           this.taskModalShown = false
           this.newTaskTitle = ''
           this.newTaskBG = 'w'
+
+          this.saveTasks()
         }
       },
       addNewSubtask () {
@@ -639,12 +603,16 @@
             addDate: new Date().getTime()
           })
           this.newProjectTitle = ''
+          this.saveProjects()
         }
       },
       addNewCol () {
         if (this.newCol.trim().length > 0) {
           this.kanbanStates.push(this.newCol.trim())
-          this.kanbanIds.push(this.kanbanIds[this.kanbanIds.length - 1] + 1)
+          let maxID = Math.max(...this.kanbanIds) // why the "..."? I dunno
+          // Math.max.apply(Math, testArr) // without "..."
+          console.log(this.kanbanIds, maxID)
+          this.kanbanIds.push(maxID + 1)
           this.newCol = ''
         }
       },
@@ -690,12 +658,14 @@
         } else {
           this.tasks[taskIndex].state = 1
         }
+
+        this.saveTasks()
       },
       filterTasks (task) {
         console.log('filterTasks')
         let projectTitle = ''
         let trimmedTerm = this.searchTerm.toLowerCase().trim()
-        if (this.selectedProject !== undefined) {
+        if (this.selectedProject !== undefined && this.projects[this.selectedProject] !== undefined) {
           projectTitle = this.projects[this.selectedProject].title.toLowerCase().trim()
         }
         // check tags for project title
@@ -736,7 +706,83 @@
       },
       open (link) {
         this.$electron.shell.openExternal(link)
+      },
+      saveTasks () {
+        var json = JSON.stringify(this.tasks, null, 2)
+        fs.writeFile(path.join(process.env.HOME, 'pm76', 'tasks.json'), json, 'utf8', () => {
+          console.log('saved Tasks.')
+        })
+      },
+      saveProjects () {
+        var json = JSON.stringify(this.projects, null, 2)
+        fs.writeFile(path.join(process.env.HOME, 'pm76', 'projects.json'), json, 'utf8', () => {
+          console.log('saved Projects.')
+        })
+      },
+      saveSettings () {
+        let config = {
+          kanbanStates: this.kanbanStates,
+          kanbanIds: this.kanbanIds,
+          // selected: this.selected,
+          // settingsShown: this.settingsShown,
+          projectListShown: this.projectListShown,
+          selectedProject: this.selectedProject
+          // selectedEdit: this.selectedEdit,
+          // searchTerm: this.searchTerm,
+          // taskModalShown: this.taskModalShown
+        }
+        var json = JSON.stringify(config, null, 2)
+        fs.writeFile(path.join(process.env.HOME, 'pm76', 'settings.json'), json, 'utf8', () => {
+          console.log('saved Settings.')
+        })
       }
+    },
+    beforeMount () {
+      let that = this
+      // check folder
+      fs.access(path.join(process.env.HOME, 'pm76'), function (err) {
+        if (err && err.code === 'ENOENT') {
+          fs.mkdir(path.join(process.env.HOME, 'pm76'), () => {
+            console.log('folder created.')
+          })
+        }
+      })
+      // projects
+      fs.readFile(path.join(process.env.HOME, 'pm76', 'projects.json'), 'utf8', function (err, data) {
+        if (err) {
+          console.log('no file ›projects.json‹, creating a new one...')
+          that.saveProjects()
+        } else {
+          that.projects = JSON.parse(data)
+        }
+      })
+      // tasks
+      fs.readFile(path.join(process.env.HOME, 'pm76', 'tasks.json'), 'utf8', function (err, data) {
+        if (err) {
+          console.log('no file ›tasks.json‹, creating a new one...')
+          that.saveTasks()
+        } else {
+          that.tasks = JSON.parse(data)
+        }
+      })
+      // settings
+      fs.readFile(path.join(process.env.HOME, 'pm76', 'settings.json'), 'utf8', function (err, data) {
+        if (err) {
+          console.log('no file ›settings.json‹, creating a new one...')
+          that.saveSettings()
+        } else {
+          let config = JSON.parse(data)
+          that.kanbanStates = config.kanbanStates
+          that.kanbanIds = config.kanbanIds
+          // that.selected = config.selected
+          // that.settingsShown = config.settingsShown
+          that.projectListShown = config.projectListShown
+          that.selectedProject = config.selectedProject
+          // that.selectedEdit = config.selectedEdit
+          // that.searchTerm = config.searchTerm
+          // that.taskModalShown = config.taskModalShown
+        }
+      })
     }
   }
 </script>
@@ -1712,14 +1758,13 @@
   }
 
   #settings .item p{
-    width: calc(100%);
+    width: calc(100% - 40px);
     padding-left: 8px;
   }
 
   #settings .item input{
-    width: calc(100% - 40px);
+    width: calc(100% - 48px);
     padding: 8px;
-    padding-left: 32px;
     font-size: 16px;
 
     background-color: transparent;
