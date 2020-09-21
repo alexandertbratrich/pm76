@@ -1,6 +1,6 @@
 {
-  "name": "pm_76",
-  "version": "0.0.1",
+  "name": "PM76",
+  "version": "0.1.912",
   "author": "alexandertbratrich <alexander@bratrich-online.de>",
   "description": "An electron-vue personal kanban-esque project management software.",
   "license": null,
@@ -17,7 +17,8 @@
     "pack:main": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.main.config.js",
     "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.renderer.config.js",
     "postinstall": "npm run lint:fix",
-    "dist": "build"
+    "dist": "build",
+    "gh-publish": "node .electron-vue/build.js && electron-builder -p always"
   },
   "build": {
     "productName": "pm_76",
@@ -44,7 +45,7 @@
       ]
     },
     "mac": {
-      "icon": "build/icons/icon.icns"
+      "icon": "build/icons/icon.png"
     },
     "win": {
       "icon": "build/icons/icon.ico",
@@ -55,6 +56,7 @@
     }
   },
   "dependencies": {
+    "electron-updater": "^4.3.5",
     "vue": "^2.5.16",
     "vue-electron": "^1.0.6",
     "vue-router": "^3.0.1"
