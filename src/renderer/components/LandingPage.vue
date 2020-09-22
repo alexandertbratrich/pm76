@@ -709,13 +709,15 @@
       },
       saveTasks () {
         var json = JSON.stringify(this.tasks, null, 2)
-        fs.writeFile(path.join(process.env.HOME, 'pm76', 'tasks.json'), json, 'utf8', () => {
+        let folder = require('electron').remote.app.getPath('appData') + '/pm76/'
+        fs.writeFile(path.join(folder, 'tasks.json'), json, 'utf8', () => {
           console.log('saved Tasks.')
         })
       },
       saveProjects () {
         var json = JSON.stringify(this.projects, null, 2)
-        fs.writeFile(path.join(process.env.HOME, 'pm76', 'projects.json'), json, 'utf8', () => {
+        let folder = require('electron').remote.app.getPath('appData') + '/pm76/'
+        fs.writeFile(path.join(folder, 'projects.json'), json, 'utf8', () => {
           console.log('saved Projects.')
         })
       },
@@ -732,23 +734,28 @@
           // taskModalShown: this.taskModalShown
         }
         var json = JSON.stringify(config, null, 2)
-        fs.writeFile(path.join(process.env.HOME, 'pm76', 'settings.json'), json, 'utf8', () => {
+        let folder = require('electron').remote.app.getPath('appData') + '/pm76/'
+        fs.writeFile(path.join(folder, 'settings.json'), json, 'utf8', () => {
           console.log('saved Settings.')
         })
       }
     },
     beforeMount () {
       let that = this
+      let folder = require('electron').remote.app.getPath('appData') + '/pm76/'
+      /* let path2 = require('electron').remote.app.getPath('documents') + '/pm76/'
+      let path3 = require('electron').remote.app.getPath('home') + '/pm76/' */
       // check folder
-      fs.access(path.join(process.env.HOME, 'pm76'), function (err) {
+
+      fs.access(folder, function (err) {
         if (err && err.code === 'ENOENT') {
-          fs.mkdir(path.join(process.env.HOME, 'pm76'), () => {
+          fs.mkdir(folder, () => {
             console.log('folder created.')
           })
         }
       })
       // projects
-      fs.readFile(path.join(process.env.HOME, 'pm76', 'projects.json'), 'utf8', function (err, data) {
+      fs.readFile(path.join(folder, 'projects.json'), 'utf8', function (err, data) {
         if (err) {
           console.log('no file ›projects.json‹, creating a new one...')
           that.saveProjects()
@@ -757,7 +764,7 @@
         }
       })
       // tasks
-      fs.readFile(path.join(process.env.HOME, 'pm76', 'tasks.json'), 'utf8', function (err, data) {
+      fs.readFile(path.join(folder, 'tasks.json'), 'utf8', function (err, data) {
         if (err) {
           console.log('no file ›tasks.json‹, creating a new one...')
           that.saveTasks()
@@ -766,7 +773,7 @@
         }
       })
       // settings
-      fs.readFile(path.join(process.env.HOME, 'pm76', 'settings.json'), 'utf8', function (err, data) {
+      fs.readFile(path.join(folder, 'settings.json'), 'utf8', function (err, data) {
         if (err) {
           console.log('no file ›settings.json‹, creating a new one...')
           that.saveSettings()
