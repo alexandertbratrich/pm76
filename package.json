@@ -1,6 +1,6 @@
 {
   "name": "PM76",
-  "version": "0.1.912",
+  "version": "0.1.923",
   "author": "alexandertbratrich <alexander@bratrich-online.de>",
   "description": "An electron-vue personal kanban-esque project management software.",
   "license": null,
@@ -21,7 +21,7 @@
     "gh-publish": "node .electron-vue/build.js && electron-builder -p always"
   },
   "build": {
-    "productName": "pm_76",
+    "productName": "pm76",
     "appId": "com.atb.pm76",
     "directories": {
       "output": "build"
@@ -56,6 +56,7 @@
     }
   },
   "dependencies": {
+    "electron-log": "^4.2.4",
     "electron-updater": "^4.3.5",
     "vue": "^2.5.16",
     "vue-electron": "^1.0.6",

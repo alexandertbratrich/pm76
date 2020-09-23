@@ -198,7 +198,7 @@
             draggable>
             <p>{{col}}</p>
 
-            <div class="button" @click="taskModalShown=true">
+            <div class="button" @click="openTaskModal(kanbanIds[index])">
               <img class="icon" src="~@/assets/plus.svg"/>
             </div>
           </div>
@@ -354,6 +354,7 @@
         // task
         taskModalShown: false,
         newTaskTitle: '',
+        newTaskState: '',
         newTaskBG: 'w',
         // edit task
         editTaskTitle: '',
@@ -370,6 +371,17 @@
       }
     },
     methods: {
+      openTaskModal (state) {
+        this.taskModalShown = true
+        this.newTaskState = state
+        if (this.selectedProject !== undefined) {
+          this.editTaskTags = [
+            this.projects[this.selectedProject].title.toLowerCase()
+          ]
+        } else {
+          this.editTaskTags = []
+        }
+      },
       selectProject (index) {
         if (this.selectedProject === index) this.selectedProject = undefined
         else {
@@ -570,7 +582,7 @@
         if (this.newTaskTitle.trim().length > 0) {
           this.tasks.unshift({
             title: this.newTaskTitle.trim(),
-            state: 0,
+            state: this.newTaskState,
             bg: this.newTaskBG,
             subtasks: this.editTaskSubtasks,
             tags: this.editTaskTags,
@@ -673,7 +685,7 @@
         if (projectTitle.length > 0) {
           if (task.tags !== undefined) {
             for (let j = 0; j < task.tags.length; j++) {
-              if (task.tags[j].toLowerCase().includes(projectTitle)) {
+              if (task.tags[j].toLowerCase() === projectTitle) {
                 check = true
                 break
               }

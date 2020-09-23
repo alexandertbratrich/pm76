@@ -2,6 +2,11 @@
 
 import { app, BrowserWindow } from 'electron'
 import { autoUpdater } from 'electron-updater'
+const log = require('electron-log')
+
+// logging
+autoUpdater.logger = log
+log.info('App starting...')
 
 /**
  * Set `__static` path to static files in production
